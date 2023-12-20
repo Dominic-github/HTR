@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ```
 
 ## Using
-! You can also change name of folder
+#### **You can also change name of folder**
 1. Test Tranining
 ```
 python src/handwriting_recognition/inferenceModel.py
