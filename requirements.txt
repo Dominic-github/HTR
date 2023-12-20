@@ -1,0 +1,4 @@
+tensorflow==2.13.0
+onnx==1.13.0
+mltu==1.1.7
+tf2onnx==1.14.0
