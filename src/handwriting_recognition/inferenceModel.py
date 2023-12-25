@@ -36,7 +36,7 @@ if __name__ == "__main__":
     for image_path, label in tqdm(df):
         image = cv2.imread(image_path)
 
-        prediction_text = model.predict(image)
+        prediction_text = model.predict(image).strip()
 
         cer = get_cer(prediction_text, label)
         print(f"Image: {image_path}, Label: {label}, Prediction: {prediction_text}, CER: {cer}")

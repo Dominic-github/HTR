@@ -45,7 +45,8 @@ if not os.path.exists(dataset_path):
 
 dataset, vocab, max_len = [], set(), 0
 
-# Preprocess the dataset by the specific IAM_Words dataset file structure
+# Xử lý trước tập dữ liệu theo cấu trúc tệp tập dữ liệu IAM_Words cụ thể
+
 words = open(os.path.join(dataset_path, "words.txt"), "r").readlines()
 for line in tqdm(words):
     if line.startswith("#"):
@@ -69,15 +70,15 @@ for line in tqdm(words):
     vocab.update(list(label))
     max_len = max(max_len, len(label))
 
-# Create a ModelConfigs object to store model configurations
+# Tạo đối tượng ModelConfigs để lưu trữ cấu hình mô hình
 configs = ModelConfigs()
 
-# Save vocab and maximum text length to configs
+# Lưu từ vựng và độ dài văn bản tối đa vào cấu hình
 configs.vocab = "".join(vocab)
 configs.max_text_length = max_len
 configs.save()
 
-# Create a data provider for the dataset
+# Tạo nhà cung cấp dữ liệu cho tập dữ liệu
 data_provider = DataProvider(
     dataset=dataset,
     skip_validation=True,
@@ -90,10 +91,10 @@ data_provider = DataProvider(
         ],
 )
 
-# Split the dataset into training and validation sets
+# Chia tập dữ liệu thành tập huấn luyện và xác nhận 
 train_data_provider, val_data_provider = data_provider.split(split = 0.9)
 
-# Augment training data with random brightness, rotation and erode/dilate
+# Tăng cường dữ liệu huấn luyện với độ sáng, xoay và xói mòn/giãn ra ngẫu nhiên
 train_data_provider.augmentors = [
     RandomBrightness(), 
     RandomErodeDilate(),
@@ -101,13 +102,13 @@ train_data_provider.augmentors = [
     RandomRotate(angle=10), 
     ]
 
-# Creating TensorFlow model architecture
+# Tạo kiến trúc mô hình TensorFlow
 model = train_model(
     input_dim = (configs.height, configs.width, 3),
     output_dim = len(configs.vocab),
 )
 
-# Compile the model and print summary
+# Biên dịch mô hình và in tóm tắt
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=configs.learning_rate), 
     loss=CTCloss(), 
@@ -115,7 +116,7 @@ model.compile(
 )
 model.summary(line_length=110)
 
-# Define callbacks
+# Xác định callbacks
 earlystopper = EarlyStopping(monitor="val_CER", patience=20, verbose=1)
 checkpoint = ModelCheckpoint(f"{configs.model_path}/model.h5", monitor="val_CER", verbose=1, save_best_only=True, mode="min")
 trainLogger = TrainLogger(configs.model_path)
@@ -123,7 +124,7 @@ tb_callback = TensorBoard(f"{configs.model_path}/logs", update_freq=1)
 reduceLROnPlat = ReduceLROnPlateau(monitor="val_CER", factor=0.9, min_delta=1e-10, patience=10, verbose=1, mode="auto")
 model2onnx = Model2onnx(f"{configs.model_path}/model.h5")
 
-# Train the model
+# Đào tạo model
 model.fit(
     train_data_provider,
     validation_data=val_data_provider,
@@ -132,6 +133,6 @@ model.fit(
     workers=configs.train_workers
 )
 
-# Save training and validation datasets as csv files
+# Lưu tập dữ liệu đào tạo và xác thực dưới dạng tệp csv
 train_data_provider.to_csv(os.path.join(configs.model_path, "train.csv"))
 val_data_provider.to_csv(os.path.join(configs.model_path, "val.csv"))
