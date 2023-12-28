@@ -38,10 +38,6 @@ def process_page(img_path):
     accum_cer.append(cer)
     accum_wer.append(wer)
 
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-
     return cer, np.average(accum_cer),wer,np.average(accum_wer) ,label, prediction_text, image
     
 
