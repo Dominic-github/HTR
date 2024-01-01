@@ -39,11 +39,11 @@ python src/handwriting_recognition/inferenceModel.py
 1. word
 
 ```
-tensorboard --logdir Models\handwriting_recognition\202312061746\logs.
+tensorboard --logdir Models\handwriting_recognition\202312061746\logs
 ```
 
 2. sentence
 
 ```
-tensorboard --logdir Models\sentence_recognition\202312071202\logs.
+tensorboard --logdir Models\sentence_recognition\202312071202\logs
 ```
